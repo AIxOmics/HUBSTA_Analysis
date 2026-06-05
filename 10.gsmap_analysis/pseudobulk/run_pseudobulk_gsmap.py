@@ -1,0 +1,79 @@
+"""Run gsMap QuickMode on pseudobulk region-celltype profiles."""
+
+from __future__ import annotations
+
+import os
+from collections import OrderedDict
+from pathlib import Path
+
+os.environ.setdefault("XLA_PYTHON_CLIENT_MEM_FRACTION", "0.4")
+
+from gsMap.config import DatasetType, QuickModeConfig
+from gsMap.pipeline.quick_mode import run_quick_mode
+
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from shared.paths import (  # noqa: E402
+    BIO_REPLICATE_SUMSTATS_CONFIG,
+    GSMAP_RESOURCE_DIR,
+    PSEUDOBULK_SUBREGION_CELLTYPE_H5AD,
+    SNP_GENE_WEIGHT_ADATA,
+    WORK_DIR,
+    ensure_work_dirs,
+)
+from shared.script_utils import configure_logging  # noqa: E402
+
+
+PROJECT_NAME = "fetal_brain_cell_bin_pseudobulk"
+
+
+def build_config() -> QuickModeConfig:
+    ensure_work_dirs(WORK_DIR)
+    return QuickModeConfig(
+        workdir=WORK_DIR,
+        project_name=PROJECT_NAME,
+        sample_h5ad_dict=OrderedDict(
+            {"fetal_brain_region_celltype": PSEUDOBULK_SUBREGION_CELLTYPE_H5AD}
+        ),
+        sumstats_config_file=BIO_REPLICATE_SUMSTATS_CONFIG,
+        w_ld_dir=GSMAP_RESOURCE_DIR / "LDSC_resource/weights_hm3_no_hla",
+        snp_gene_weight_adata_path=SNP_GENE_WEIGHT_ADATA,
+        annotation="subregion_major_celltype",
+        spatial_key="X_umap",
+        data_layer="counts",
+        n_cell_training=100000,
+        latent_representation_cell="X_scVI",
+        spatial_neighbors=300,
+        adjacent_slice_spatial_neighbors=200,
+        homogeneous_neighbors=21,
+        n_adjacent_slices=4,
+        dataset_type=DatasetType.SCRNA_SEQ,
+        rank_read_workers=30,
+        compute_input_queue_size=5,
+        mkscore_write_workers=5,
+        mkscore_compute_workers=5,
+        mkscore_batch_size=20,
+        find_homogeneous_batch_size=200,
+        high_quality_cell_qc=True,
+        cauchy_annotations=[
+            "regions",
+            "celltype",
+            "major_celltype",
+            "subregion_major_celltype",
+        ],
+        spots_per_chunk_quick_mode=50,
+        ldsc_compute_workers=10,
+        ldsc_read_workers=15,
+        use_gpu=True,
+        start_step="latent2gene",
+    )
+
+
+def main() -> None:
+    configure_logging()
+    run_quick_mode(build_config())
+
+
+if __name__ == "__main__":
+    main()

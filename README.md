@@ -15,6 +15,7 @@ A comprehensive spatial transcriptomics analysis pipeline for human fetal brain 
 | **Mid-Hindbrain (MHB)** | `07.mhb_analysis/` | DEG, Ligand-Receptor, Tracks plots |
 | **Cerebellum** | `08.cerebellum_analysis/` | DEG, Single-cell annotation, Spatial annotation, Pseudotime, Ligand-Receptor, Circos plots |
 | **Spatial GRN** | `09.grn_analysis/` | GPU SpaGRN submodule, whole-brain and region-specific GRN notebooks, TF/regulon visualization |
+| **gsMap Analysis** | `10.gsmap_analysis/` | Spatial genetic enrichment across bin100, cell-bin, single-cell, and pseudobulk representations |
 | **Cortex** | `12.3D_ply_plot/` | 3D PLY mesh gene visualization |
 
 ---
@@ -58,6 +59,12 @@ A comprehensive spatial transcriptomics analysis pipeline for human fetal brain 
 ┌─────────────────────────┐
 │  09. Spatial GRN        │  ← GPU SpaGRN inference and
 │     Analysis            │     TF/regulon visualization
+└───────────┬─────────────┘
+            │
+            ▼
+┌─────────────────────────┐
+│  10. gsMap Analysis     │  ← Spatial GWAS enrichment on
+│                         │     bin100/cell-bin/SC/pseudobulk
 └───────────┬─────────────┘
             │
             ▼
@@ -143,6 +150,14 @@ HUBSTA_Analysis/
 │   ├── docs/                   # Notebook and output inventories
 │   ├── _3D_plot.py             # K3D 3D expression helper
 │   └── requirements.txt
+│
+├── 10.gsmap_analysis/         # gsMap spatial genetic enrichment analysis
+│   ├── bin100_3d/              # Whole-brain bin100 3D gsMap run
+│   ├── cell_bin/               # Cell-bin gsMap runs and Cauchy plots
+│   ├── single_cell/            # Single-cell gsMap run
+│   ├── pseudobulk/             # Pseudobulk construction and gsMap run
+│   ├── summary/                # Final comparison figures
+│   └── shared/                 # Shared paths and annotation helpers
 │
 ├── 12.3D_ply_plot/            # 3D PLY mesh visualization
 │   ├── 2_mhb_gene_plot_*.py   # MHB 3D gene plot

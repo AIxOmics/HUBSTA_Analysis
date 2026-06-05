@@ -1,0 +1,12 @@
+anndata
+h5py
+matplotlib
+numpy
+pandas
+scanpy
+scipy
+scvi-tools
+seaborn
+statsmodels
+torch
+gsMap
